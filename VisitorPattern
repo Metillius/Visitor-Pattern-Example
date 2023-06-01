@@ -1,0 +1,209 @@
+
+import java.util.ArrayList;
+
+// Element  (Element)
+// defines an Accept operation that takes a visitor a
+// as an argument.
+
+interface Element {
+    public void Accept(Visitor visitor);
+}
+
+//"Visitor" declares a Visit operation for each class of ConcreteElement in the
+//object structure. The operation's name and signature identifies the
+//class that sends the Visit request to the visitor. That lets the
+//visitor determine the concrete class of the element being visited.
+//Then the visitor can access the elements directly through its particular
+//interface
+//
+//"Visitor"
+interface Visitor {
+    public void Visit(Electronics element);
+    public void Visit(Grocery element);
+    public void Visit(Clothing element);
+    public void Visit(Book element);
+}
+
+//ConcreteElement  (Item)
+//implements an Accept operation that
+//takes a visitor as an argument
+
+abstract class Item implements Element {
+    private String name;
+    private double price;
+    private double discount;
+    private double tax;
+    /*
+    private String name;
+    private double income;
+    private int vacationDays;
+    */
+
+
+
+    // Constructor
+    public Item(String name, double price, double discount , double tax) {
+        this.name = name;
+        this.price = price;
+        this.discount = discount;
+        this.tax= tax;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getTax() {
+        return tax;
+    }
+
+    public void setTax(double tax) {
+        this.tax = tax;
+    }
+}
+
+class Electronics extends Item {
+
+    public Electronics(String name, double price, double discount, double tax) {
+        super(name, price, discount, tax);
+    }
+
+    public void Accept(Visitor visitor) {visitor.Visit(this);}
+}
+
+class Grocery extends Item {
+    public Grocery(String name, double price, double discount, double tax) {
+        super(name, price, discount, tax);
+    }
+    public void Accept(Visitor visitor) {visitor.Visit(this);}
+
+}
+
+class Clothing extends Item {
+    public Clothing(String name, double price, double discount, double tax) {
+        super(name, price, discount, tax);
+    }
+    public void Accept(Visitor visitor) {visitor.Visit(this);}
+}
+class Book extends Item {
+    public Book(String name, double price, double discount, double tax) {
+        super(name, price, discount, tax);
+    }
+    public void Accept(Visitor visitor) {visitor.Visit(this);}
+}
+
+
+// ObjectStructure can enumerate its elements  may provide a
+// high-level interface to allow the visitor to visit its elements
+// may either be a Composite (pattern) or a collection such as a
+// list or a set
+//
+// ObjectStructure  (Items)
+class Items {
+    public void Add(Item item){ items.add(item);};
+    public void Remove(Item item) {
+        for (int i = 0; i< items.size(); i++) {
+            if (items.get(i).getName() == item.getName()) {
+                items.remove(i);
+                return;
+            }
+        }
+    }
+    public void Accept(Visitor visitor) {
+        // set argument to something that helps
+        // tell the Observers what happened
+        for (int i = 0; i < items.size(); i++) {
+            items.get(i).Accept(visitor);		}
+    }
+    private ArrayList<Item> items = new ArrayList<Item>();
+};
+
+// ConcreteVisitors (IncomeVisitor, VacationVisitor)
+// implements each operation declared by Visitor. Each operation implements
+// a fragment of the algorithm defined for the corresponding class or object
+// in the structure. ConcreteVisitor provides the context for the algorithm
+// and stores its local state. This state often accumulates results during
+// the traversal of the structure.
+//
+// "ConcreteVisitor 1"
+class IncomeVisitor implements  Visitor {
+    public void Visit(Electronics element){
+        element.setDiscount((element.getPrice() - element.getPrice()* 0.05));
+        System.out.println(element.getName() + "'s Discounted price: "+ element.getDiscount());
+
+    }
+    public void Visit(Grocery element){
+        element.setDiscount((element.getPrice() - element.getPrice()* 0.15));
+        System.out.println(element.getName() + "'s Discounted price: "+ element.getDiscount());
+
+    }
+    public void Visit(Clothing element){
+        element.setDiscount((element.getPrice() - element.getPrice()* 0.1));
+        System.out.println(element.getName() + "'s Discounted price: "+ element.getDiscount());
+
+    }
+    public void Visit(Book element){
+        element.setDiscount((element.getPrice() - element.getPrice()* 0.01));
+        System.out.println(element.getName() + "'s Discounted price: "+ element.getDiscount());
+
+    }
+}
+// "ConcreteVisitor 2"
+
+class VacationVisitor implements Visitor {
+
+    public void Visit(Electronics element){
+        element.setTax(element.getPrice()+ element.getPrice()* 0.52);
+        System.out.println(element.getName() + "'s Tax price is: "+ element.getTax());
+    }
+    public void Visit(Grocery element){
+
+        element.setTax(element.getPrice()+ element.getPrice()* 0.08);
+        System.out.println(element.getName() + "'s Tax price is: "+ element.getTax());
+    }
+    public void Visit(Clothing element){
+
+        element.setTax(element.getPrice()+ element.getPrice()* 0.18);
+        System.out.println(element.getName() + "'s Tax price is: "+ element.getTax());
+    }
+    public void Visit(Book element){
+
+        element.setTax(element.getPrice()+ element.getPrice()* 0.12);
+        System.out.println(element.getName() + "'s Tax price is: "+ element.getTax());
+    }
+}
+
+public class VisitorPattern {
+    public static void main(String[] args) {
+        // Setup items collection
+        Items e = new Items();
+        e.Add(new Electronics("Iphone", 499,0,0));
+        e.Add(new Grocery("Raspberry",19,0,0));
+        e.Add(new Clothing("Shoes",79,0,0));
+        e.Add(new Book("Alice in Wonderland", 12,0,0));
+
+        // Items are 'visited'
+        e.Accept(new IncomeVisitor());
+        e.Accept(new VacationVisitor());
+    }
+}
